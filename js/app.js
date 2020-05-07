@@ -1,10 +1,11 @@
 // YOUR CODE HERE!
+
 var svgWidth = 960;
 var svgHeight = 500;
 
 var margin = {
   top: 50,
-  right: 50,
+  right: 80,
   bottom: 50,
   left: 50
 };
@@ -24,6 +25,7 @@ var chartGroup = svg.append("g")
 
 // Import Data
 d3.csv("data/data.csv").then(function(riskData) {
+  console.log(riskData);
 
     // Parse Data
     riskData.forEach(function(data) {
@@ -37,8 +39,8 @@ d3.csv("data/data.csv").then(function(riskData) {
       .range([0,width]);
 
     var yLinearScale = d3.scaleLinear()
-      .domain([0, d3.max(riskData, d => d.healthcare)])
-      .range([height, 0]);
+      .domain([2, d3.max(riskData, d => d.healthcare)])
+      .range([height, 2]);
 
     // Axis functions
     // ==============================
@@ -70,63 +72,25 @@ d3.csv("data/data.csv").then(function(riskData) {
       .data(riskData)
       .enter()
       .append("text")
+      .text(d => (d.abbr))
       .attr("x", d => xLinearScale(d.poverty))
       .attr("y", d => yLinearScale(d.healthcare))
       .style("font-size", "12px")
       .style("text-anchor", "middle")
-      .style("fill", "black")
-      .text(d => (d.abbr));
+      .style("fill", "black");
 
-
-    // Tool tip
-    // ==============================
-    var toolTip = d3.tip()
-      .attr("class", "tooltip")
-      .style("background","black")
-      .style("color", "white")
-      .offset([80, -60])
-      .html(function(d) {
-        return (`${d.state}<br>Poverty: ${d.poverty}%<br>Healthcare: ${d.healthcare}%`)
-      });
-
-    // Chart tooltip
-    // ==============================
-    chartGroup.call(toolTip);
-
-    // Event listeners for display
-    // ==============================
-    circlesGroup.on("mouseover", function() {
-      d3.select(this)
-        .transition()
-        .duration(1000)
-        .attr("r",20)
-        .attr("fill","blue");
-    })
-      .on("click",function(d) {
-        toolTip.show(d,this);
-      })
-
-      // mouseout event
-      .on("mouseout", function() {
-        d3.select(this)
-        .transition()
-        .duration(1000)
-        .attr("r",15)
-        .attr("fill","green")
-        toolTip.hide()
-      });
 
     // Axes labels
     chartGroup.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 0 - margin.left)
-      .attr("x", 0 - (height / 2))
+      .attr("y", 0 - 50)
+      .attr("x", 0 - 250)
       .attr("dy", "1em")
       .attr("class", "axisText")
       .text("Lacks Healthcare (%)");
 
     chartGroup.append("text")
-      .attr("transform", `translate(${width / 2}, ${height + margin.top - 10})`)
+      .attr("transform", `translate(${width / 2.5}, ${height + margin.top - 10})`)
       .attr("class", "axisText")
       .text("In poverty (%)");
   });
